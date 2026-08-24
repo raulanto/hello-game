@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello Kitty Adventure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>Hello Kitty Adventure</h1>
+        <div class="level-indicator" id="levelIndicator">Nivel 1</div>
+    </div>
+
+    <div class="game-wrap">
+        <canvas id="gameCanvas" width="800" height="360"></canvas>
+
+        <div class="overlay" id="startOverlay">
+            <h2>Elige tu personaje</h2>
+            <div class="char-pick" id="charPick">
+                <button data-char="kitty" class="active">
+                    <img src="sprites/kitty_stand.png" alt="Hello Kitty">
+                    Hello Kitty
+                </button>
+                <button data-char="mimmy">
+                    <img src="sprites/mimmy_stand.png" alt="Mimmy">
+                    Mimmy
+                </button>
+            </div>
+            
+            <h2>Selecciona el Nivel</h2>
+            <select id="levelSelect" class="level-select">
+                <option value="0">Nivel 1 - Básico</option>
+                <option value="1">Nivel 2 - Picos y Precisión</option>
+                <option value="2">Nivel 3 - Globos</option>
+                <option value="3">Nivel 4 - Plataformas Móviles</option>
+                <option value="4">Nivel 5 - Interruptores y Puertas</option>
+                <option value="5">Nivel 6 - Móviles + Picos</option>
+                <option value="6">Nivel 7 - Llaves y Candados</option>
+                <option value="7">Nivel 8 - Derrumbe</option>
+                <option value="8">Nivel 9 - El Gran Laberinto</option>
+                <option value="9">Nivel 10 - Desafío Final</option>
+            </select>
+            
+            <p>Flechas / A-D para moverte, Espacio o ↑ para saltar. Recoge globos y mantén ↑ en el aire para volar. Evita los pinchos y no caigas en los huecos.</p>
+            <button class="big" id="startBtn">Jugar</button>
+        </div>
+
+        <div class="overlay hidden" id="endOverlay">
+            <h2 id="endTitle">¡Fin!</h2>
+            <p id="endMsg"></p>
+            <div class="btn-group">
+                <button class="big" id="restartBtn">Jugar de nuevo</button>
+                <button class="big hidden" id="nextLevelBtn">Siguiente Nivel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="touch-controls" style="width:800px; max-width:96vw;">
+        <div class="side">
+            <button id="btnLeft">◀</button>
+            <button id="btnRight">▶</button>
+        </div>
+        <div class="side">
+            <button id="btnJump">▲</button>
+        </div>
+    </div>
+
+    <p class="instructions">Sprites recortados de la spritesheet original (Hello Kitty World NES) en <code>sprites/</code>.</p>
+
+    <script src="script.js"></script>
+</body>
+</html>
