@@ -45,6 +45,18 @@
         return img;
     }
 
+    // Tiles (pixel-platform cake/candy set, cropped into sprites/Tiles/tile_NNNN.png)
+    function loadTile(idx) {
+        const img = new Image();
+        img.src = `sprites/Tiles/tile_${String(idx).padStart(4, '0')}.png`;
+        return img;
+    }
+    const TILE = 18;
+    const groundTopImgs = [0, 1, 2, 3].map(loadTile);      // chocolate frosting top
+    const groundFillImgs = [32, 33, 34, 35].map(loadTile); // chocolate cake body
+    const platformTopImgs = [4, 5, 6, 7].map(loadTile);    // pink frosting top
+    const fallableTopImgs = [26, 27, 28].map(loadTile);    // caramel wafer (crumbling platforms)
+
     // Birds (Stardew Valley spritesheet, cropped into sprites/birds/<color>_<0-9>.png)
     const BIRD_COLORS = ['sparrow', 'bluejay', 'dove', 'cardinal', 'crow', 'owl'];
     const BIRD_FLAP_FRAMES = [2, 3, 4, 5, 6, 7];
@@ -684,13 +696,24 @@
         for (const seg of groundSegments) {
             const x1 = seg.x1 - cameraX, x2 = seg.x2 - cameraX;
             if (x2 < 0 || x1 > W) continue;
-            ctx.fillStyle = '#8fd97a';
-            ctx.fillRect(x1, GROUND_Y, x2 - x1, 10);
-            ctx.fillStyle = '#c98b4b';
-            ctx.fillRect(x1, GROUND_Y + 10, x2 - x1, H - GROUND_Y - 10);
-            ctx.strokeStyle = '#6bb857';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(x1, GROUND_Y, x2 - x1, 10);
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(x1, GROUND_Y, x2 - x1, H - GROUND_Y);
+            ctx.clip();
+            const startCol = Math.floor(seg.x1 / TILE);
+            const endCol = Math.ceil(seg.x2 / TILE);
+            for (let col = startCol; col < endCol; col++) {
+                const tx = col * TILE - cameraX;
+                if (tx + TILE < 0 || tx > W) continue;
+                const topImg = groundTopImgs[((col % groundTopImgs.length) + groundTopImgs.length) % groundTopImgs.length];
+                if (topImg.complete) ctx.drawImage(topImg, tx, GROUND_Y, TILE, TILE);
+                let row = 0;
+                for (let ty = GROUND_Y + TILE; ty < H; ty += TILE, row++) {
+                    const fillImg = groundFillImgs[((col + row) % groundFillImgs.length + groundFillImgs.length) % groundFillImgs.length];
+                    if (fillImg.complete) ctx.drawImage(fillImg, tx, ty, TILE, TILE);
+                }
+            }
+            ctx.restore();
         }
     }
 
@@ -698,24 +721,29 @@
         for (const p of platforms) {
             const x = p.x - cameraX;
             if (x + p.w < 0 || x > W || p.y > H) continue;
-            
+
             // If falling and vibrating
             let shakeX = 0;
             if (p.falling && p.fallTimer > 0) {
                 shakeX = (Math.random() - 0.5) * 4;
             }
-            
-            if (p.fallable) {
-                ctx.fillStyle = '#ffe0b2'; // Orangeish for fallable
-                ctx.fillRect(x + shakeX, p.y, p.w, p.h);
-                ctx.fillStyle = '#ffb74d';
-                ctx.fillRect(x + shakeX, p.y, p.w, 5);
-            } else {
-                ctx.fillStyle = '#ffcfe0';
-                ctx.fillRect(x, p.y, p.w, p.h);
-                ctx.fillStyle = '#ff9db0';
-                ctx.fillRect(x, p.y, p.w, 5);
+
+            const topImgs = p.fallable ? fallableTopImgs : platformTopImgs;
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(x + shakeX, p.y, p.w, p.h);
+            ctx.clip();
+            const startCol = Math.floor(p.x / TILE);
+            const endCol = Math.ceil((p.x + p.w) / TILE);
+            for (let col = startCol; col < endCol; col++) {
+                const tx = col * TILE - cameraX + shakeX;
+                let row = 0;
+                for (let ty = p.y; ty < p.y + p.h; ty += TILE, row++) {
+                    const img = topImgs[((col + row) % topImgs.length + topImgs.length) % topImgs.length];
+                    if (img.complete) ctx.drawImage(img, tx, ty, TILE, TILE);
+                }
             }
+            ctx.restore();
         }
     }
 
