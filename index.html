@@ -10,8 +10,13 @@
 <body>
     <div class="header">
         <h1>Hello Kitty Adventure</h1>
-        <div class="level-indicator" id="levelIndicator">Nivel 1</div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button id="muteBtn" class="mute-btn">🔊</button>
+            <div class="level-indicator" id="levelIndicator">Nivel 1</div>
+        </div>
     </div>
+    
+    <audio id="bgMusic" src="Sanrio Background Music 1 HOUR w My Melody.mp3" loop preload="auto"></audio>
 
     <div class="game-wrap">
         <canvas id="gameCanvas" width="800" height="360"></canvas>
@@ -67,8 +72,16 @@
         </div>
     </div>
 
-    <p class="instructions">Sprites recortados de la spritesheet original (Hello Kitty World NES) en <code>sprites/</code>.</p>
 
+    <script src="js/constants.js"></script>
+    <script src="js/sound.js"></script>
+    <script src="js/assets.js"></script>
+    <script src="js/levels.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/input.js"></script>
+    <script src="js/ui.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
